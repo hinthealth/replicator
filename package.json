@@ -1,0 +1,15 @@
+{
+  "name": "replicator",
+  "version": "0.0.0",
+  "description": "A front end factory library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "factory",
+    "factories"
+  ],
+  "author": "Blake West <bwest87@gmail.com> (http://www.sympatheticvibration.com/)",
+  "license": "MIT"
+}
