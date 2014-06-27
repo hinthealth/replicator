@@ -11,5 +11,12 @@
     "factories"
   ],
   "author": "Blake West <bwest87@gmail.com> (http://www.sympatheticvibration.com/)",
-  "license": "MIT"
+  "contributors": [
+    "Gregory Hilkert <EpiphanyMachine@gmail.com>"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "~1.20.1",
+    "should": "~4.0.4"
+  }
 }

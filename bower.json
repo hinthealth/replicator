@@ -1,0 +1,26 @@
+{
+  "name": "replicator",
+  "version": "0.0.0",
+  "homepage": "https://github.com/bwest87/replicator",
+  "authors": [
+    "Blake West <bwest87@gmail.com>",
+    "Gregory Hilkert <EpiphanyMachine@gmail.com>"
+  ],
+  "description": "Front end factory library",
+  "main": "src/replicator.js",
+  "keywords": [
+    "replicator",
+    "factory",
+    "testing"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "devDependencies": {
+    "jquery": "~2.1.1"
+  }
+}
