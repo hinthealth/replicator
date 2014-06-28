@@ -1,6 +1,12 @@
+/* jshint immed: false */
+/* globals Replicator, describe, beforeEach, it, xdescribe */
+
+(function () {
+'use strict';
+
 describe('Replicator', function() {
   describe('#define', function() {
-    describe("invalid arguments", function() {
+    describe('invalid arguments', function() {
       it('should throw an error if no name is given', function() {
         (function(){ Replicator.define(); }).should.throw(/name/);
       });
@@ -14,7 +20,7 @@ describe('Replicator', function() {
       beforeEach(function() {
         Replicator.define('user');
       });
-      xit("should have #trait method", function() {
+      xit('should have #trait method', function() {
       });
       it('should set an empty object on the registry', function() {
         Replicator.build('user')().should.eql({});
@@ -32,43 +38,43 @@ describe('Replicator', function() {
         Replicator.define('user', {first: 'johnny', last: 'appleseed', bill: Replicator.embed('bill')});
         Replicator.build('user')().should.eql({first: 'johnny', last: 'appleseed', bill: {amount: 50}});
       });
-      describe('should accept functions as keys', function(done) {
+      describe('should accept functions as keys', function() {
         beforeEach(function(){
           Replicator.define('user', {
-            name: "joe",
+            name: 'joe',
             email: function(props, index) {
-              return props.name + index + "@gmail.com";
+              return props.name + index + '@gmail.com';
             }
           });
         });
         it('should pass the props and an index', function() {
-          Replicator.build('user')().email.should.eql("joe1@gmail.com");
+          Replicator.build('user')().email.should.eql('joe1@gmail.com');
         });
         it('should increment the index', function() {
-          Replicator.build('user')().email.should.eql("joe1@gmail.com");
-          Replicator.build('user')().email.should.eql("joe2@gmail.com");
-          Replicator.build('user')().email.should.eql("joe3@gmail.com");
+          Replicator.build('user')().email.should.eql('joe1@gmail.com');
+          Replicator.build('user')().email.should.eql('joe2@gmail.com');
+          Replicator.build('user')().email.should.eql('joe3@gmail.com');
         });
       });
     });
   }); // define
   describe('#trait', function() {
-    describe("with valid arguments", function() {
-      it("should override existing attributes", function() {
+    describe('with valid arguments', function() {
+      it('should override existing attributes', function() {
         Replicator
-          .define('user', {name: "Joe"})
-          .trait("namedBob", {name: "Bob"});
+          .define('user', {name: 'Joe'})
+          .trait('namedBob', {name: 'Bob'});
 
         Replicator.build('user', {namedBob: true})()
-          .should.eql({name: "Bob"});
+          .should.eql({name: 'Bob'});
       });
-      it("should create new attributes", function() {
+      it('should create new attributes', function() {
         Replicator
-          .define('user', {name: "Joe"})
-          .trait("withAge", {age: 4});
+          .define('user', {name: 'Joe'})
+          .trait('withAge', {age: 4});
 
         Replicator.build('user', {withAge: true})()
-          .should.eql({name: "Joe", age: 4});
+          .should.eql({name: 'Joe', age: 4});
       });
     });
 
@@ -85,11 +91,11 @@ describe('Replicator', function() {
         describe('that match traits', function() {
           it('should set the traits', function() {
             Replicator
-              .define('user', {name: "Joe", is_confirmed: false})
-              .trait("is_confirmed", {is_confirmed: true, age: 18});
+              .define('user', {name: 'Joe', is_confirmed: false})
+              .trait('is_confirmed', {is_confirmed: true, age: 18});
 
             Replicator.build('user', {is_confirmed: true})()
-              .should.eql({name: "Joe", is_confirmed: true, age: 18});
+              .should.eql({name: 'Joe', is_confirmed: true, age: 18});
           });
         });
         describe('that don\'t match traits', function() {
@@ -100,29 +106,29 @@ describe('Replicator', function() {
         });
       });
     });
-    xdescribe("with dependent functions", function() {
+    xdescribe('with dependent functions', function() {
       // Where one calculated prop depends on another calculated prop
     });
     describe('with enforcement', function() {
       beforeEach(function() {
-        Replicator.define('user', {name: "Joe"});
+        Replicator.define('user', {name: 'Joe'});
       });
-      it("should throw an error for non registered overrides", function() {
+      it('should throw an error for non registered overrides', function() {
         (function(){ Replicator.build('user', {age: 5}); }).should.throw(/unregistered/);
       });
     });
     describe('without enforcement', function() {
     });
   }); // build
-  xdescribe("with Faker.js", function() {
+  xdescribe('with Faker.js', function() {
     Replicator.define('user', {
       // user_email: 'faker | email' string.split(' | ')
     });
 
   });
-  xdescribe("with calling real API's", function() {
+  xdescribe('with calling real APIs', function() {
 
   });
 
 });
-
+}());
