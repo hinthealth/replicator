@@ -106,6 +106,19 @@ describe('Replicator', function() {
         });
       });
     });
+    describe("result", function() {
+      var user;
+      beforeEach(function() {
+        Replicator.define('user', {name: "joe"});
+        user = Replicator.build('user');
+      });
+      it("should be able to be passed a hash to override given properties", function() {
+        user({name: "bob"}).should.eql({name: "bob"});
+      });
+      it("should throw an error if the passed in trait is not registered", function() {
+        (function(){ user({age: 5}); }).should.throw(/unregistered/);
+      });
+    });
     xdescribe('with dependent functions', function() {
       // Where one calculated prop depends on another calculated prop
     });

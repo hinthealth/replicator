@@ -1,9 +1,9 @@
 (function () {
   'use strict';
   // Data Stores
-  var registry = {};
-  var traits = {};
-  var indicies = {};
+  var sharedRegistry = {};
+  var sharedTraits = {};
+  var sharedIndicies = {};
   var config = {
     enforce: true
   };
@@ -15,7 +15,7 @@
       // Only accepting 'trait: true' as syntax
       if (prop !== true) {return;}
 
-      var matchedTrait = traits[name][key];
+      var matchedTrait = sharedTraits[name][key];
       if ( _.isObject(matchedTrait) ) {
         _.extend(traitProps, matchedTrait);
         delete buildProps[key];
@@ -43,7 +43,7 @@
   }
 
   function calculateProps(name, buildProps) {
-    var definedProps = registry[name];
+    var definedProps = sharedRegistry[name];
     // this removes traits from buildProps
     var traitProps = splitTraits(name, buildProps);
     var props = _.extend({}, definedProps, traitProps, buildProps);
@@ -55,10 +55,10 @@
     // this removed functions from props
     var funcProps = splitFunctions(props);
     _.each(funcProps, function (val, key) {
-      props[key] = val(props, indicies[name]);
+      props[key] = val(props, sharedIndicies[name]);
     });
 
-    indicies[name]++;
+    sharedIndicies[name]++;
     return props;
   }
 
@@ -71,8 +71,8 @@
     var trait = function (traitName, props) {
       // enforce string for name
       // enforce object for props
-      traits[name] = traits[name] || {};
-      traits[name][traitName] = props;
+      sharedTraits[name] = sharedTraits[name] || {};
+      sharedTraits[name][traitName] = props;
       return factory;
     };
 
@@ -81,8 +81,8 @@
     };
 
     // Set on data store
-    registry[name] = props;
-    indicies[name] = 1;
+    sharedRegistry[name] = props;
+    sharedIndicies[name] = 1;
     trait[name] = {};
 
     return factory;
@@ -99,7 +99,9 @@
 
     if (copies === 1) { result = result[0]; }
 
-    return function() { return result; };
+    return function(props) {
+      return props ? build(name, props)() : result;
+    };
   }
 
   var Replicator = {
