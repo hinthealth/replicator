@@ -11,14 +11,14 @@
 
   function splitTraits(factoryName, buildProps) {
     var traitProps = {};
-    _.each(buildProps, function(prop, key) {
+    _.each(buildProps, function(propVal, prop) {
       // Only accepting 'trait: true' as syntax
-      if (prop !== true) {return;}
+      if (propVal !== true) {return;}
 
-      var matchedTrait = sharedTraits[factoryName][key];
+      var matchedTrait = sharedTraits[factoryName][prop];
       if ( _.isObject(matchedTrait) ) {
         _.extend(traitProps, matchedTrait);
-        delete buildProps[key];
+        delete buildProps[prop];
       }
     });
     return traitProps;
@@ -33,19 +33,19 @@
 
   function splitFunctions(props) {
     var funcProps = {};
-    _.each(props, function (val, key) {
-      if ( _.isFunction(val) ) {
-        funcProps[key] = val;
-        delete props[key];
+    _.each(props, function (propVal, prop) {
+      if ( _.isFunction(propVal) ) {
+        funcProps[prop] = propVal;
+        delete props[prop];
       }
     });
     return funcProps;
   }
 
-  function calculateProps(name, buildProps) {
-    var definedProps = sharedRegistry[name];
+  function calculateProps(factoryName, buildProps) {
+    var definedProps = sharedRegistry[factoryName];
     // this removes traits from buildProps
-    var traitProps = splitTraits(name, buildProps);
+    var traitProps = splitTraits(factoryName, buildProps);
     var props = _.extend({}, definedProps, traitProps, buildProps);
 
     if (config.enforce) {
@@ -54,11 +54,11 @@
 
     // this removed functions from props
     var funcProps = splitFunctions(props);
-    _.each(funcProps, function (val, key) {
-      props[key] = val(props, sharedIndicies[name]);
+    _.each(funcProps, function (propVal, prop) {
+      props[prop] = propVal(props, sharedIndicies[factoryName]);
     });
 
-    sharedIndicies[name]++;
+    sharedIndicies[factoryName]++;
     return props;
   }
 
