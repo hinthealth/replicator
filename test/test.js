@@ -20,8 +20,6 @@ describe('Replicator', function() {
       beforeEach(function() {
         Replicator.define('user');
       });
-      xit('should have #trait method', function() {
-      });
       it('should set an empty object on the registry', function() {
         Replicator.build('user')().should.eql({});
       });
@@ -133,7 +131,7 @@ describe('Replicator', function() {
     describe('without enforcement', function() {
     });
   }); // build
-  describe.only('with Faker.js', function() {
+  describe('with Faker.js', function() {
     it("should use the argument after the pipe to pass to faker", function() {
       Replicator.define('user', {user_email: 'faker | email'});
       Replicator.build('user')().user_email.should.match(/\@/);
