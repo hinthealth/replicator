@@ -62,6 +62,22 @@
     return props;
   }
 
+  function getFaker(attr, prop) {
+    var fakerContainers = ['Name', 'Address', 'PhoneNumber', 'Internet', 'Company', 'Image', 'Lorem', 'Helpers', 'Tree', 'Date', 'random', 'definitions'];
+    var fakeValue;
+    // Defaul to the keys value if they only passed in 'faker'.
+    attr = attr.toLowerCase() == 'faker' ? prop : attr;
+    _.each(fakerContainers, function(container) {
+      if (faker[container][attr]) {
+        fakeValue = faker[container][attr]();
+      }
+    });
+    if (fakeValue) {
+      return fakeValue;
+    }
+    throw new Error(attr + " is not a valid attribute for faker.js");
+  }
+
 
   function define(factoryName, props) {
     if ( !_.isString(factoryName) ) { throw new Error('A factory name is required.'); }
@@ -79,6 +95,24 @@
     var factory = {
       trait: trait
     };
+
+    // Look for faker values
+    _.each(props, function(propVal, prop) {
+      // Only accepting Faker calls as strings with "faker | fakerAttr " syntax for now.
+      if(!_.isString(propVal)) {return;}
+
+      var regex = /(faker)\s*\|?\s*(\w*)/i;
+      var matches = propVal.match(regex);
+      var attr;
+      if (matches) {
+        // The regex has two capture groups. But the first item of the array is always the input itself.
+        // So we want to look at slots 1 and 2. The first is always "faker", the second is the arg to faker.
+        // So we're either taking the second group (the arg), or just 'faker' if no second group was captured.
+        attr = matches[2] ? matches[2] : matches[1];
+      }
+
+      props[prop] = attr ? getFaker(attr, prop) : propVal;
+    });
 
     // Set on data store
     sharedRegistry[factoryName] = props;

@@ -133,11 +133,33 @@ describe('Replicator', function() {
     describe('without enforcement', function() {
     });
   }); // build
-  xdescribe('with Faker.js', function() {
-    Replicator.define('user', {
-      // user_email: 'faker | email' string.split(' | ')
+  describe.only('with Faker.js', function() {
+    it("should use the argument after the pipe to pass to faker", function() {
+      Replicator.define('user', {user_email: 'faker | email'});
+      Replicator.build('user')().user_email.should.match(/\@/);
+    });
+    it("should be forgiving with the spacing", function() {
+      Replicator.define('user', {user_email: 'faker    |     email'});
+      Replicator.build('user')().user_email.should.match(/\@/);
+
+      Replicator.define('user', {user_email: '   faker|email   '});
+      Replicator.build('user')().user_email.should.match(/\@/);
+
+      Replicator.define('user', {user_email: 'faker    | email'});
+      Replicator.build('user')().user_email.should.match(/\@/);
+    });
+    it("should default to use the key's name as the faker argument", function() {
+      Replicator.define('user', {email: 'faker'});
+      Replicator.build('user')().email.should.match(/\@/);
+    });
+    it("should throw an error if the key or the arg isn't a valid Faker option", function() {
+      // Should show you the attr name
+      (function(){ Replicator.define('user', {user_email: 'faker | NOTREAL'});}).should.throw(/NOTREAL/);
+
+      (function(){ Replicator.define('user', {user_email: 'faker | NOTREAL'});}).should.throw(/not a valid/);
     });
 
+    // string.split(' | ')
   });
   xdescribe('with calling real APIs', function() {
 
