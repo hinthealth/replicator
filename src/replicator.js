@@ -5,12 +5,27 @@
 
   var calculateProps = function (name, buildProps) {
     var definedProps = registry[name];
-    // var definedTraits = traits[name]
-    var props = _.extend(definedProps, buildProps);
+    var definedTraits = traits[name];
 
+
+    // Finding all traits
+    var traitProps = {};
+    _.each(buildProps, function(prop, key) {
+      // Only accepting 'trait: true' as syntax
+      if (prop !== true) {return;}
+
+      var matchedTrait = definedTraits[key];
+      if ( _.isObject(matchedTrait) ) {
+        _.extend(traitProps, matchedTrait);
+        delete buildProps[key];
+      }
+    });
+
+    var props = _.extend(definedProps, traitProps, buildProps);
+
+    // put all non functions in the calculatedProps
     var funcProps = {};
     var calculatedProps = {};
-    // put all non functions in the calculatedProps
     _.each(props, function (val, key) {
       if ( _.isFunction(val) ) {
         funcProps[key] = val;
@@ -18,8 +33,6 @@
         calculatedProps[key] = val;
       }
     });
-
-    // apply the traits
 
     // now that all non funcs are copied, call the funcs
     _.each(funcProps, function (val, key) {
@@ -36,13 +49,16 @@
     props = props || {};
 
     // PUBLIC METHOD
-    var trait = function () {
-      return name;
+    var trait = function (traitName, props) {
+      traits[name] = traits[name] || {};
+
+      traits[name][traitName] = props;
+      return factory;
     };
     // END PUBLIC METHOD
 
     var factory = {
-      trait: trait,
+      trait: trait
     };
 
     // set to factory registry

@@ -52,7 +52,25 @@ describe('Replicator', function() {
       });
     });
   }); // define
-  xdescribe('#trait', function() {
+  describe('#trait', function() {
+    describe("with valid arguments", function() {
+      it("should override existing attributes", function() {
+        Replicator
+          .define('user', {name: "Joe"})
+          .trait("namedBob", {name: "Bob"});
+
+        Replicator.build('user', {namedBob: true})()
+          .should.eql({name: "Bob"});
+      });
+      it("should create new attributes", function() {
+        Replicator
+          .define('user', {name: "Joe"})
+          .trait("withAge", {age: 4});
+
+        Replicator.build('user', {withAge: true})()
+          .should.eql({name: "Joe", age: 4});
+      });
+    });
 
   }); // trait
   xdescribe('#build', function() {
@@ -78,6 +96,9 @@ describe('Replicator', function() {
             });
           });
         });
+      });
+      xdescribe("with dependent functions", function() {
+        // Where one calculated prop depends on another calculated prop
       });
 
     });
@@ -105,8 +126,13 @@ describe('Replicator', function() {
         });
       });
     });
-
   }); // build
+  xdescribe("with Faker.js", function() {
+
+  });
+  xdescribe("with calling real API's", function() {
+
+  });
 
 });
 
