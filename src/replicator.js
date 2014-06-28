@@ -9,13 +9,13 @@
   };
 
 
-  function splitTraits(name, buildProps) {
+  function splitTraits(factoryName, buildProps) {
     var traitProps = {};
     _.each(buildProps, function(prop, key) {
       // Only accepting 'trait: true' as syntax
       if (prop !== true) {return;}
 
-      var matchedTrait = sharedTraits[name][key];
+      var matchedTrait = sharedTraits[factoryName][key];
       if ( _.isObject(matchedTrait) ) {
         _.extend(traitProps, matchedTrait);
         delete buildProps[key];
@@ -63,16 +63,16 @@
   }
 
 
-  function define(name, props) {
-    if ( !_.isString(name) ) { throw new Error('A factory name is required.'); }
+  function define(factoryName, props) {
+    if ( !_.isString(factoryName) ) { throw new Error('A factory name is required.'); }
     // check for props to be object
     props = props || {};
 
-    var trait = function (traitName, props) {
-      // enforce string for name
+    var trait = function (traitName, traitProps) {
+      // enforce string for factoryName
       // enforce object for props
-      sharedTraits[name] = sharedTraits[name] || {};
-      sharedTraits[name][traitName] = props;
+      sharedTraits[factoryName] = sharedTraits[factoryName] || {};
+      sharedTraits[factoryName][traitName] = traitProps;
       return factory;
     };
 
@@ -81,34 +81,34 @@
     };
 
     // Set on data store
-    sharedRegistry[name] = props;
-    sharedIndicies[name] = 1;
-    trait[name] = {};
+    sharedRegistry[factoryName] = props;
+    sharedIndicies[factoryName] = 1;
+    trait[factoryName] = {};
 
     return factory;
   }
 
-  function build(name, props, copies) {
+  function build(factoryName, props, copies) {
     copies = copies || 1;
-    if ( !_.isString(name) ) { throw new Error('A factory name is required.'); }
+    if ( !_.isString(factoryName) ) { throw new Error('A factory name is required.'); }
 
     var result = [];
     _.each(_.range(copies), function(){
-      result.push(calculateProps(name, props));
+      result.push(calculateProps(factoryName, props));
     });
 
     if (copies === 1) { result = result[0]; }
 
     return function(props) {
-      return props ? build(name, props)() : result;
+      return props ? build(factoryName, props)() : result;
     };
   }
 
   var Replicator = {
     define: define,
     build: build,
-    embed: function(name, props, copies) {
-      return this.build(name, props, copies)();
+    embed: function(factoryName, props, copies) {
+      return this.build(factoryName, props, copies)();
     },
     config: function(opts) {
       if (!opts) { return config; }
