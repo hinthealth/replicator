@@ -21,7 +21,13 @@
       }
     });
 
-    var props = _.extend(definedProps, traitProps, buildProps);
+    var props = _.extend({}, definedProps, traitProps, buildProps);
+
+    // check for enforcement
+    if (Replicator.config.enforce) {
+      var propsMinusBuildLength = _.keys(_.extend(definedProps, traitProps)).length;
+      if (propsMinusBuildLength !== _.keys(props).length) { throw new Error('You can\'t add unregistered attributes in a build.'); }
+    }
 
     // put all non functions in the calculatedProps
     var funcProps = {};
@@ -87,7 +93,7 @@
     embed: function(name, props, copies) {
       return this.build(name, props, copies)();
     },
-    config:{}
+    config:{enforce: true}
   };
 
   window.Replicator = Replicator;

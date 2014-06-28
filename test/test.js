@@ -73,61 +73,51 @@ describe('Replicator', function() {
     });
 
   }); // trait
-  xdescribe('#build', function() {
-    describe('with enforcement', function() {
-      describe('when passed a hash', function() {
-        describe('with values other than true', function() {
-          beforeEach(function() {
-            Replicator.define('user', {});
+  describe('#build', function() {
+    describe('when passed a hash', function() {
+      describe('with values other than true', function() {
+        it('should set them as properties',function() {
+          Replicator.define('user', {is_confirmed: false});
+          Replicator.build('user', {is_confirmed: true})().is_confirmed.should.eql(true);
+        });
+      });
+      describe('with true values', function() {
+        describe('that match traits', function() {
+          it('should set the traits', function() {
+            Replicator
+              .define('user', {name: "Joe", is_confirmed: false})
+              .trait("is_confirmed", {is_confirmed: true, age: 18});
+
+            Replicator.build('user', {is_confirmed: true})()
+              .should.eql({name: "Joe", is_confirmed: true, age: 18});
           });
+        });
+        describe('that don\'t match traits', function() {
           it('should set them as properties',function() {
-
-          });
-        });
-        describe('with true values', function() {
-          describe('that match traits', function() {
-            it('should set the traits', function() {
-
-            });
-          });
-          describe('that don\'t match traits', function() {
-            it('should set as an property', function() {
-
-            });
+            Replicator.define('user', {is_confirmed: false});
+            Replicator.build('user', {is_confirmed: true})().is_confirmed.should.eql(true);
           });
         });
       });
-      xdescribe("with dependent functions", function() {
-        // Where one calculated prop depends on another calculated prop
+    });
+    xdescribe("with dependent functions", function() {
+      // Where one calculated prop depends on another calculated prop
+    });
+    describe('with enforcement', function() {
+      beforeEach(function() {
+        Replicator.define('user', {name: "Joe"});
       });
-
+      it("should throw an error for non registered overrides", function() {
+        (function(){ Replicator.build('user', {age: 5}); }).should.throw(/unregistered/);
+      });
     });
     describe('without enforcement', function() {
-      describe('when passed a hash', function() {
-        describe('with values other than true', function() {
-          beforeEach(function() {
-            Replicator.define('user', {});
-          });
-          it('should set them as properties',function() {
-
-          });
-        });
-        describe('with true values', function() {
-          describe('that match traits', function() {
-            it('should set the traits', function() {
-
-            });
-          });
-          describe('that don\'t match traits', function() {
-            it('should set as an property', function() {
-
-            });
-          });
-        });
-      });
     });
   }); // build
   xdescribe("with Faker.js", function() {
+    Replicator.define('user', {
+      // user_email: 'faker | email' string.split(' | ')
+    });
 
   });
   xdescribe("with calling real API's", function() {
