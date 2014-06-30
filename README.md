@@ -52,7 +52,7 @@ Replicator.define('user', {
 });
 ```
 
-
+**Sequences and references to other traits**
 You can base any trait on any other trait you pass in, like so...
 
 ```
@@ -68,7 +68,8 @@ Replicator.define('user', {
   id: function(props, i) {
     // i is the sequence number for this particular factory. It increments as you make more.
     return i;
-  }
+  },
+  credit_card: Replicator.embed('credit_card') //Unlike build, embed immediatley returns the object for that factory, not a function.
 });
 ```
 
