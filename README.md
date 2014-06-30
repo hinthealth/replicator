@@ -13,7 +13,7 @@ Replicator.define('user', {
 })
   .trait("confirmed", {
     is_confirmed: true
-  })
+  }) // Traits can be chained!
   .trait("withBatCar", {
     has_bat_car: true
   });
@@ -24,6 +24,9 @@ var bruce = Replicator.build('user');
 // The returned function can be invoked with attributes that always override the defaults.
 
 $httpBackend.whenGET('/user').respond(bruce({age: 35}) );
+
+// Use with traits and overrides
+var batCarBruce = Replicator.build('user', {withBatCar: true, age: 25});
 ```
 
 
@@ -75,7 +78,7 @@ Replicator.define('user', {
 
 ** Make more!! **
 ```
-Replicator.define('user', {name: "bruce wayne"}, 3); 
+Replicator.build('user', {name: "bruce wayne"}, 3); 
 // The above would return a function, that, when invoked, returns [{name: "bruce"}, {name: "bruce"}, {name: "bruce"}];
 ```
 
