@@ -3,6 +3,7 @@ replicator
 
 ***Basic Usage***
 
+```
 // Define name of factory, and any trait variations.
 Replicator.define('user', {
   name: "Bruce Wayne",
@@ -23,6 +24,7 @@ var bruce = Replicator.build('user');
 // The returned function can be invoked with attributes that always override the defaults.
 
 $httpBackend.whenGET('/user').respond(bruce({age: 35}) );
+```
 
 
 
@@ -37,14 +39,23 @@ $httpBackend.whenGET('/user').respond(bruce({age: 35}) );
 ***Faker.js***!
 Replicator comes baked in with easy, complete access to Faker.js (https://github.com/FotoVerite/faker.js)
 
-Just pass in "faker | [faker attributes]" to any field, and we'll create a faker instance of that field for you, like so...
+Just pass in "faker | [faker attribute]" to any field, and we'll create a faker instance of that field for you, like so...
+```
 Replicator.define('user', {
   user_email: "faker | email" // returns eg. "joe.smith287@gmail.com" or whatever faker gives you.
 });
+```
+Or... just pass in 'faker', and Replicator will assume you want the field name to be the attribute...
+```
+Replicator.define('user', {
+  email: "faker" // returns eg. "joe.smith287@gmail.com" or whatever faker gives you.
+});
+```
 
 
 You can base any trait on any other trait you pass in, like so...
 
+```
 Replicator.define('user', {
   first_name: "bruce"
   last_name: "wayne",
@@ -59,13 +70,11 @@ Replicator.define('user', {
     return i;
   }
 });
+```
 
 ** Make more!! **
+```
 Replicator.define('user', {name: "bruce wayne"}, 3); 
 // The above would return a function, that, when invoked, returns [{name: "bruce"}, {name: "bruce"}, {name: "bruce"}];
-
-
-By default, Replicator will throw an error if the overriden attribute has not been "registered" with that factories
-definition or with any of it's traits. This is to help give you one source of truth for what fields your API should return,
-while still giving you easy flexibility to modify attributes on the fly in your tests.
+```
 
