@@ -1,12 +1,12 @@
 {
   "name": "replicator",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "homepage": "https://github.com/bwest87/replicator",
   "authors": [
     "Blake West <bwest87@gmail.com>",
     "Gregory Hilkert <EpiphanyMachine@gmail.com>"
   ],
-  "description": "Front end factory library",
+  "description": "Elegant, powerful front end factories, complete with Faker.js integration",
   "main": "src/replicator.js",
   "keywords": [
     "replicator",
@@ -14,15 +14,13 @@
     "testing"
   ],
   "license": "MIT",
-  "private": true,
+  "private": false,
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components"
+    "bower_components",
+    "test"
   ],
-  "devDependencies": {
-    "jquery": "~2.1.1"
-  },
   "dependencies": {
     "lodash": "~2.4.1"
   }
