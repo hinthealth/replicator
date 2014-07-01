@@ -4,7 +4,6 @@ var uglify = require('gulp-uglify');
 
 var paths = {
 	vendor: ['node_modules/faker/minfaker.js',
-			 'bower_components/jquery/dis/jquery.min.js',
 			 'bower_components/lodash/dist/lodash.min.js'
 			],
 	src: 'src/replicator.js'
