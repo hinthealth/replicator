@@ -1,11 +1,11 @@
 replicator
 ==========
 
-***Install***
+##Install
 
 `bower install replicator`
 
-***Basic Usage***
+##Basic Usage
 
 ```
 // Define name of factory, and any trait variations.
@@ -43,15 +43,15 @@ bruce({badAttr: "blah"}) // Throws an error!
 
 
 
-***Cool Stuff***
+##Cool Stuff
 
-***Enforcement!***
+###Enforcement!
   Replicator, by default, ensures that you don't override any of your factories with traits you haven't registered. This is helpful
   so that when your API changes, you can change the factory trait in one place, and all your tests should start breaking, even if you
   had written some random override somewhere in one of your tests. siiiick. 
 
 
-***Faker.js***!
+###Faker.js!
 Replicator comes baked in with easy, complete access to Faker.js (https://github.com/FotoVerite/faker.js)
 
 Just pass in "faker | [faker attribute]" to any field, and we'll create a faker instance of that field for you, like so...
@@ -67,7 +67,7 @@ Replicator.define('user', {
 });
 ```
 
-**Sequences and references to other traits**
+###Use functions to create factory values!
 You can base any trait on any other trait you pass in, like so...
 
 ```
@@ -88,8 +88,9 @@ Replicator.define('user', {
 });
 ```
 
-** Make more!! **
+###Make copies!
 ```
+// Just pass in any number you like after the attrs, and Replicator will produce that many. Obvi, it defaults to 1.
 Replicator.build('user', {name: "bruce wayne"}, 3); 
 // The above would return a function, that, when invoked, returns [{name: "bruce"}, {name: "bruce"}, {name: "bruce"}];
 ```
