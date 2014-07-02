@@ -107,7 +107,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       // Only accepting 'trait: true' as syntax
       if (propVal !== true) {return;}
 
-      var matchedTrait = sharedTraits[factoryName][prop];
+      var matchedTrait = getTraitProps(factoryName, prop);
       if ( _.isObject(matchedTrait) ) {
         _.extend(traitProps, matchedTrait);
         delete buildProps[prop];
@@ -117,10 +117,18 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
   }
 
   function enforce(definedProps, traitProps, props) {
-    var propsMinusBuildLength = _.keys(_.extend(definedProps, traitProps)).length;
+    var propsMinusBuildLength = _.keys(_.extend({}, definedProps, traitProps)).length;
     if (propsMinusBuildLength !== _.keys(props).length) {
       throw new Error('You can\'t add unregistered attributes in a build.');
     }
+  }
+
+  function getDefinedProps(factoryName) {
+    return sharedRegistry[factoryName];
+  }
+
+  function getTraitProps(factoryName, trait) {
+    return sharedTraits[factoryName][trait];
   }
 
   function splitFunctions(props) {
@@ -135,7 +143,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
   }
 
   function calculateProps(factoryName, buildProps) {
-    var definedProps = sharedRegistry[factoryName];
+    var definedProps = getDefinedProps(factoryName);
     // this removes traits from buildProps
     var traitProps = splitTraits(factoryName, buildProps);
     var props = _.extend({}, definedProps, traitProps, buildProps);
@@ -150,7 +158,12 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       props[prop] = propVal(props, sharedIndicies[factoryName]);
     });
 
+    // Removing for now, as there are issues we'll need to deal with around passing arguments to certain faker attrs.
+
+    // fakerize(props);
+
     sharedIndicies[factoryName]++;
+
     return props;
   }
 
@@ -170,24 +183,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     throw new Error(attr + " is not a valid attribute for faker.js");
   }
 
-
-  function define(factoryName, props) {
-    if ( !_.isString(factoryName) ) { throw new Error('A factory name is required.'); }
-    // check for props to be object
-    props = props || {};
-
-    var trait = function (traitName, traitProps) {
-      // enforce string for factoryName
-      // enforce object for props
-      sharedTraits[factoryName] = sharedTraits[factoryName] || {};
-      sharedTraits[factoryName][traitName] = traitProps;
-      return factory;
-    };
-
-    var factory = {
-      trait: trait
-    };
-
+  function fakerize(props) {
     // Look for faker values
     _.each(props, function(propVal, prop) {
       // Only accepting Faker calls as strings with "faker | fakerAttr " syntax for now.
@@ -205,6 +201,24 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
       props[prop] = attr ? getFaker(attr, prop) : propVal;
     });
+  }
+
+  function define(factoryName, props) {
+    if ( !_.isString(factoryName) ) { throw new Error('A factory name is required.'); }
+    // check for props to be object
+    props = props || {};
+
+    var trait = function (traitName, traitProps) {
+      // enforce string for factoryName
+      // enforce object for props
+      sharedTraits[factoryName] = sharedTraits[factoryName] || {};
+      sharedTraits[factoryName][traitName] = traitProps;
+      return factory;
+    };
+
+    var factory = {
+      trait: trait
+    };
 
     // Set on data store
     sharedRegistry[factoryName] = props;
