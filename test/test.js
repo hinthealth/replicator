@@ -104,6 +104,24 @@ describe('Replicator', function() {
         });
       });
     });
+    describe("when building multiple versions of the same factory", function() {
+      it("should not mutate any existing factories", function() {
+        Replicator.define('user', {name: "joe"}).trait("namedBob", {name: "bob"});
+        var user1 = Replicator.build('user')();
+        var user2 = Replicator.build('user', {namedBob: true})();
+        user1.name.should.eql("joe");
+        user2.name.should.eql("bob");
+      });
+      it.only("should be able to build multiple versions in an array", function() {
+        Replicator.define('user', {name: "joe"}).trait("namedBob", {name: "bob"});
+        var list = [];
+        list.push(Replicator.build('user')() );
+        list.push(Replicator.build('user', {namedBob: true})() );
+
+        list[0].name.should.eql('joe');
+        list[1].name.should.eql('bob');
+      });
+    });
     describe("result", function() {
       var user;
       beforeEach(function() {
@@ -131,7 +149,7 @@ describe('Replicator', function() {
     describe('without enforcement', function() {
     });
   }); // build
-  describe('with Faker.js', function() {
+  xdescribe('with Faker.js', function() {
     it("should use the argument after the pipe to pass to faker", function() {
       Replicator.define('user', {user_email: 'faker | email'});
       Replicator.build('user')().user_email.should.match(/\@/);
@@ -156,8 +174,11 @@ describe('Replicator', function() {
 
       (function(){ Replicator.define('user', {user_email: 'faker | NOTREAL'});}).should.throw(/not a valid/);
     });
+    it("should work if the faker attribute is part of a trait", function () {
+      Replicator.define('user', {name: "joe"}).trait("confirmed", {confirmed_at: "faker | past"});
+      Replicator.build('user', {confirmed: true})().confirmed_at.should.match(/[0-9]/);
+    });
 
-    // string.split(' | ')
   });
   xdescribe('with calling real APIs', function() {
 
