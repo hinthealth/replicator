@@ -112,14 +112,18 @@ describe('Replicator', function() {
         user1.name.should.eql("joe");
         user2.name.should.eql("bob");
       });
-      it.only("should be able to build multiple versions in an array", function() {
+      it("should be able to build multiple versions in an array", function() {
         Replicator.define('user', {name: "joe"}).trait("namedBob", {name: "bob"});
         var list = [];
-        list.push(Replicator.build('user')() );
         list.push(Replicator.build('user', {namedBob: true})() );
+        list.push(Replicator.build('user')() );
 
-        list[0].name.should.eql('joe');
-        list[1].name.should.eql('bob');
+        list[0].name.should.eql('bob');
+        list[1].name.should.eql('joe');
+
+        list.push(Replicator.build('user')() );
+
+        list[2].name.should.eql('joe');
       });
     });
     describe("result", function() {
