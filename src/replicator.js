@@ -24,10 +24,12 @@
     return traitProps;
   }
 
-  function enforce(definedProps, traitProps, props) {
-    var propsMinusBuildLength = _.keys(_.extend({}, definedProps, traitProps)).length;
-    if (propsMinusBuildLength !== _.keys(props).length) {
-      throw new Error('You can\'t add unregistered attributes in a build.');
+  function enforce(definedProps, traitProps, props, factoryName) {
+    var propsMinusBuildLength = _.keys(_.extend({}, definedProps, traitProps))
+    // TODO: Check if xor is actually the thing we want...
+    var difference = _.xor(propsMinusBuildLength, _.keys(props));
+    if (difference.length) {
+      throw new Error('Couldnn\'t add unregistered attributes ' + difference.join(',') + 'in a build of factory' + factoryName);
     }
   }
 
@@ -57,7 +59,7 @@
     var props = _.extend({}, definedProps, traitProps, buildProps);
 
     if (config.enforce) {
-      enforce(definedProps, traitProps, props);
+      enforce(definedProps, traitProps, props, factoryName);
     }
 
     // this removed functions from props
