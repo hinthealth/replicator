@@ -184,37 +184,6 @@ describe('Replicator', function() {
     describe('without enforcement', function() {
     });
   }); // build
-  xdescribe('with Faker.js', function() {
-    it("should use the argument after the pipe to pass to faker", function() {
-      Replicator.define('user', {user_email: 'faker | email'});
-      Replicator.makeFactory('user')().user_email.should.match(/\@/);
-    });
-    it("should be forgiving with the spacing", function() {
-      Replicator.define('user', {user_email: 'faker    |     email'});
-      Replicator.makeFactory('user')().user_email.should.match(/\@/);
-
-      Replicator.define('user', {user_email: '   faker|email   '});
-      Replicator.makeFactory('user')().user_email.should.match(/\@/);
-
-      Replicator.define('user', {user_email: 'faker    | email'});
-      Replicator.makeFactory('user')().user_email.should.match(/\@/);
-    });
-    it("should default to use the key's name as the faker argument", function() {
-      Replicator.define('user', {email: 'faker'});
-      Replicator.makeFactory('user')().email.should.match(/\@/);
-    });
-    it("should throw an error if the key or the arg isn't a valid Faker option", function() {
-      // Should show you the attr name
-      (function(){ Replicator.define('user', {user_email: 'faker | NOTREAL'});}).should.throw(/NOTREAL/);
-
-      (function(){ Replicator.define('user', {user_email: 'faker | NOTREAL'});}).should.throw(/not a valid/);
-    });
-    it("should work if the faker attribute is part of a trait", function () {
-      Replicator.define('user', {name: "joe"}).trait("confirmed", {confirmed_at: "faker | past"});
-      Replicator.makeFactory('user', {confirmed: true})().confirmed_at.should.match(/[0-9]/);
-    });
-
-  });
   xdescribe('with calling real APIs', function() {
 
   });

@@ -68,10 +68,6 @@
       props[prop] = propVal(props, sharedIndicies[factoryName]);
     });
 
-    // Removing for now, as there are issues we'll need to deal with around passing arguments to certain faker attrs.
-
-    // fakerize(props);
-
     sharedIndicies[factoryName]++;
 
     return props;
@@ -91,26 +87,6 @@
       return fakeValue;
     }
     throw new Error(attr + " is not a valid attribute for faker.js");
-  }
-
-  function fakerize(props) {
-    // Look for faker values
-    _.each(props, function(propVal, prop) {
-      // Only accepting Faker calls as strings with "faker | fakerAttr " syntax for now.
-      if(!_.isString(propVal)) {return;}
-
-      var regex = /(faker)\s*\|?\s*(\w*)/i;
-      var matches = propVal.match(regex);
-      var attr;
-      if (matches) {
-        // The regex has two capture groups. But the first item of the array is always the input itself.
-        // So we want to look at slots 1 and 2. The first is always "faker", the second is the arg to faker.
-        // So we're either taking the second group (the arg), or just 'faker' if no second group was captured.
-        attr = matches[2] ? matches[2] : matches[1];
-      }
-
-      props[prop] = attr ? getFaker(attr, prop) : propVal;
-    });
   }
 
   function define(factoryName, props) {
