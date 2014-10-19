@@ -138,10 +138,14 @@
     return factory;
   }
 
-  function build(factoryName, props, copies) {
+  function makeFactory(factoryName, props, copies) {
     copies = copies || 1;
-    if ( !_.isString(factoryName) ) { throw new Error('A factory name is required.'); }
-    if ( !sharedRegistry[factoryName] ) { throw new Error('Can\'t build ' + factoryName + ' because it has not been defined'); }
+    if ( !_.isString(factoryName) ) {
+      throw new Error('A factory name is required.');
+    }
+    if ( !sharedRegistry[factoryName] ) {
+      throw new Error('Can\'t build ' + factoryName + '. It has not been defined');
+    }
 
     var result = [];
     _.each(_.range(copies), function(){
@@ -151,16 +155,23 @@
     if (copies === 1) { result = result[0]; }
 
     return function(props) {
-      return props ? build(factoryName, props)() : result;
+      return props ? makeFactory(factoryName, props)() : result;
+    };
+  }
+
+  function embed(factoryName, props, copies) {
+    return function() {
+      return Replicator.build(factoryName, props, copies);
     };
   }
 
   var Replicator = {
     define: define,
-    build: build,
-    embed: function(factoryName, props, copies) {
-      return this.build(factoryName, props, copies)();
+    makeFactory: makeFactory,
+    build: function(factoryName, props, copies) {
+      return this.makeFactory(factoryName, props, copies)();
     },
+    embed: embed,
     config: function(opts) {
       if (!opts) { return config; }
       // check opts for actual config keys
