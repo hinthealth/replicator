@@ -78,6 +78,13 @@ describe('Replicator', function() {
 
   }); // trait
   describe('#build', function() {
+    describe('when there is no factory', function() {
+      it('should throw a helpful error message', function() {
+        ( function() {
+          Replicator.build('factoryThatDoesntExist')();
+        }).should.throw(/factoryThatDoesntExist/);
+      });
+    });
     describe('when passed a hash', function() {
       describe('with values other than true', function() {
         it('should set them as properties',function() {

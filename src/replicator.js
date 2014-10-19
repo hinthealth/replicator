@@ -141,6 +141,7 @@
   function build(factoryName, props, copies) {
     copies = copies || 1;
     if ( !_.isString(factoryName) ) { throw new Error('A factory name is required.'); }
+    if ( !sharedRegistry[factoryName] ) { throw new Error('Can\'t build ' + factoryName + ' because it has not been defined'); }
 
     var result = [];
     _.each(_.range(copies), function(){
