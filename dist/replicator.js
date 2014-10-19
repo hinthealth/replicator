@@ -116,10 +116,12 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     return traitProps;
   }
 
-  function enforce(definedProps, traitProps, props) {
-    var propsMinusBuildLength = _.keys(_.extend({}, definedProps, traitProps)).length;
-    if (propsMinusBuildLength !== _.keys(props).length) {
-      throw new Error('You can\'t add unregistered attributes in a build.');
+  function enforce(definedProps, traitProps, props, factoryName) {
+    var propsMinusBuildLength = _.keys(_.extend({}, definedProps, traitProps))
+    // TODO: Check if xor is actually the thing we want...
+    var difference = _.xor(propsMinusBuildLength, _.keys(props));
+    if (difference.length) {
+      throw new Error('Couldnn\'t add unregistered attributes ' + difference.join(',') + 'in a build of factory' + factoryName);
     }
   }
 
@@ -149,7 +151,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     var props = _.extend({}, definedProps, traitProps, buildProps);
 
     if (config.enforce) {
-      enforce(definedProps, traitProps, props);
+      enforce(definedProps, traitProps, props, factoryName);
     }
 
     // this removed functions from props
@@ -228,9 +230,14 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     return factory;
   }
 
-  function build(factoryName, props, copies) {
+  function makeFactory(factoryName, props, copies) {
     copies = copies || 1;
-    if ( !_.isString(factoryName) ) { throw new Error('A factory name is required.'); }
+    if ( !_.isString(factoryName) ) {
+      throw new Error('A factory name is required.');
+    }
+    if ( !sharedRegistry[factoryName] ) {
+      throw new Error('Can\'t build ' + factoryName + '. It has not been defined');
+    }
 
     var result = [];
     _.each(_.range(copies), function(){
@@ -240,16 +247,23 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     if (copies === 1) { result = result[0]; }
 
     return function(props) {
-      return props ? build(factoryName, props)() : result;
+      return props ? makeFactory(factoryName, props)() : result;
+    };
+  }
+
+  function embed(factoryName, props, copies) {
+    return function() {
+      return Replicator.build(factoryName, props, copies);
     };
   }
 
   var Replicator = {
     define: define,
-    build: build,
-    embed: function(factoryName, props, copies) {
-      return this.build(factoryName, props, copies)();
+    makeFactory: makeFactory,
+    build: function(factoryName, props, copies) {
+      return this.makeFactory(factoryName, props, copies)();
     },
+    embed: embed,
     config: function(opts) {
       if (!opts) { return config; }
       // check opts for actual config keys
