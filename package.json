@@ -21,8 +21,5 @@
     "gulp-uglify": "^0.3.1",
     "mocha": "~1.20.1",
     "should": "~4.0.4"
-  },
-  "dependencies": {
-    "faker": "~1.0.0"
   }
 }
