@@ -85,7 +85,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     // TODO: Check if xor is actually the thing we want...
     var difference = _.xor(propsMinusBuildLength, _.keys(props));
     if (difference.length) {
-      throw new Error('Couldnn\'t add unregistered attributes ' + difference.join(',') + 'in a build of factory' + factoryName);
+      throw new Error('Couldnn\'t add unregistered attributes ' + difference.join(',') + ' in a build of factory ' + factoryName);
     }
   }
 
