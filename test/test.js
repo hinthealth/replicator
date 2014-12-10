@@ -34,7 +34,6 @@ describe('Replicator', function() {
         embeddingFactoriesThatDontExistYet();
         Replicator.build('user').friend.should.eql({name: 'Joe'});
       });
-
     });
     describe('when passed only a name', function() {
       beforeEach(function() {
@@ -98,6 +97,46 @@ describe('Replicator', function() {
 
   }); // trait
   describe('#build', function() {
+    describe('when building multiple factories', function() {
+      beforeEach(function() {
+        Replicator
+          .define("fur", {fluffy: false})
+          .trait("isFluffy", {fluffy: true});
+        Replicator
+          .define("dog", {
+            fur: Replicator.embed("fur")
+          })
+          .trait("isFluffy", {
+            fur: Replicator.embed("fur", {isFluffy: true})
+          });
+      });
+      describe('without any traits', function() {
+        it("should produce the same result multiple times", function() {
+          var fur1 = Replicator.build('fur')
+          var fur2 = Replicator.build('fur')
+          fur1.fluffy.should.eql(false);
+          fur2.fluffy.should.eql(false);
+        });
+      })
+      describe('with traits', function() {
+        it("should produce the same result multiple times", function() {
+          var fur1 = Replicator.build('fur', {isFluffy: true});
+          var fur2 = Replicator.build('fur', {isFluffy: true});
+          fur1.fluffy.should.eql(true);
+          fur2.fluffy.should.eql(true);
+        });
+      });
+      describe('when there are multiple factories involved', function() {
+        it('should produce the same reuslt multiple times', function() {
+          var dogOne = Replicator.build("dog", {isFluffy: true});
+          var dogTwo = Replicator.build("dog", {isFluffy: true});
+          dogOne.fur.should.eql({fluffy: true});
+          dogTwo.fur.should.eql({fluffy: true});
+        })
+      });
+    });
+  });
+  describe('#makeFactory', function() {
     describe('when there is no factory', function() {
       it('should throw a helpful error message', function() {
         ( function() {
