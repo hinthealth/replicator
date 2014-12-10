@@ -99,6 +99,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
   };
 
   function getPropsForOneTrait(factoryName, trait) {
+    // Shouldn't be needed. Just to be paranoid.
+    sharedTraits[factoryName] = sharedTraits[factoryName] || {};
     return sharedTraits[factoryName][trait];
   }
 
@@ -165,7 +167,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     // Set on data store
     sharedRegistry[factoryName] = props;
     factoryCounts[factoryName] = 1;
-    trait[factoryName] = {};
+    sharedTraits[factoryName] = {};
 
     return factory;
   }

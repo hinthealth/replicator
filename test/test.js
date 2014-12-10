@@ -147,8 +147,8 @@ describe('Replicator', function() {
     describe('when passed a hash', function() {
       describe('with values other than true', function() {
         it('should set them as properties',function() {
-          Replicator.define('user', {is_confirmed: false});
-          Replicator.makeFactory('user', {is_confirmed: true})().is_confirmed.should.eql(true);
+          Replicator.define('user', {name: "joe"});
+          Replicator.makeFactory('user', {name: "blake"})().name.should.eql("blake");
         });
       });
       describe('with true values', function() {
@@ -156,16 +156,26 @@ describe('Replicator', function() {
           it('should set the traits', function() {
             Replicator
               .define('user', {name: 'Joe', is_confirmed: false})
-              .trait('is_confirmed', {is_confirmed: true, age: 18});
+              .trait('isConfirmed', {is_confirmed: true, age: 18});
 
-            Replicator.makeFactory('user', {is_confirmed: true})()
+            Replicator.makeFactory('user', {isConfirmed: true})()
               .should.eql({name: 'Joe', is_confirmed: true, age: 18});
           });
         });
         describe('that don\'t match traits', function() {
-          it('should set them as properties',function() {
-            Replicator.define('user', {is_confirmed: false});
-            Replicator.makeFactory('user', {is_confirmed: true})().is_confirmed.should.eql(true);
+          describe('but are valid properties', function() {
+            it('should set them as properties',function() {
+              Replicator.define('patient', {is_confirmed: false});
+              Replicator.makeFactory('patient', {is_confirmed: true})().is_confirmed.should.eql(true);
+            });
+          });
+          describe('but are not valid properties', function() {
+            it('should throw a helpful error message', function() {
+              Replicator.define('patient', {is_confirmed: false});
+              ( function() {
+                Replicator.makeFactory('patient', {withPaymentMethod: true})().is_confirmed.should.eql(true);
+              }).should.throw(/unregistered/)
+            });
           });
         });
       });
