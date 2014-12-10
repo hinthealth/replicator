@@ -59,22 +59,21 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
   // Data Stores
   var sharedRegistry = {};
   var sharedTraits = {};
-  var sharedIndicies = {};
+  var factoryCounts = {};
   var config = {
     enforce: true
   };
 
 
-  function splitTraits(factoryName, buildProps) {
+  function getAllTraitProps(factoryName, buildProps) {
     var traitProps = {};
-    _.each(buildProps, function(propVal, prop) {
-      // Only accepting 'trait: true' as syntax
-      if (propVal !== true) {return;}
-
-      var matchedTrait = getTraitProps(factoryName, prop);
+    _(buildProps)
+      .pick(function(propValue) {
+      return propValue === true
+    }).each(function(propValue, propName) {
+      var matchedTrait = getPropsForOneTrait(factoryName, propName);
       if ( _.isObject(matchedTrait) ) {
         _.extend(traitProps, matchedTrait);
-        delete buildProps[prop];
       }
     });
     return traitProps;
@@ -93,38 +92,39 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     return sharedRegistry[factoryName];
   }
 
-  function getTraitProps(factoryName, trait) {
+  function getOverrideProps(factoryName, props) {
+    return _.pick(props, function(propVal, propName) {
+      return !getPropsForOneTrait(factoryName, propName);
+    })
+  };
+
+  function getPropsForOneTrait(factoryName, trait) {
     return sharedTraits[factoryName][trait];
   }
 
-  function splitFunctions(props) {
-    var funcProps = {};
-    _.each(props, function (propVal, prop) {
-      if ( _.isFunction(propVal) ) {
-        funcProps[prop] = propVal;
-        delete props[prop];
+  function evaluateDynamicProperties(props, count) {
+    _.each(props, function(propVal, propName) {
+      if(_.isFunction(propVal)) {
+        props[propName] = propVal(props, count)
       }
-    });
-    return funcProps;
+    })
   }
 
   function calculateProps(factoryName, buildProps) {
     var definedProps = getDefinedProps(factoryName);
-    // this removes traits from buildProps
-    var traitProps = splitTraits(factoryName, buildProps);
-    var props = _.extend({}, definedProps, traitProps, buildProps);
+    var traitProps = getAllTraitProps(factoryName, buildProps);
+    var overrideProps = getOverrideProps(factoryName, buildProps);
+
+    var props = _.extend({}, definedProps, traitProps, overrideProps);
 
     if (config.enforce) {
       enforce(definedProps, traitProps, props, factoryName);
     }
 
-    // this removed functions from props
-    var funcProps = splitFunctions(props);
-    _.each(funcProps, function (propVal, prop) {
-      props[prop] = propVal(props, sharedIndicies[factoryName]);
-    });
+    var count = factoryCounts[factoryName];
+    evaluateDynamicProperties(props, count);
 
-    sharedIndicies[factoryName]++;
+    factoryCounts[factoryName]++;
 
     return props;
   }
@@ -164,7 +164,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
     // Set on data store
     sharedRegistry[factoryName] = props;
-    sharedIndicies[factoryName] = 1;
+    factoryCounts[factoryName] = 1;
     trait[factoryName] = {};
 
     return factory;
@@ -186,8 +186,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
     if (copies === 1) { result = result[0]; }
 
-    return function(props) {
-      return props ? makeFactory(factoryName, props)() : result;
+    return function(overrideProps) {
+      return overrideProps ? makeFactory(factoryName, overrideProps)() : result;
     };
   }
 
