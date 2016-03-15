@@ -11,10 +11,9 @@
 
   function getAllTraitProps(factoryName, buildProps) {
     var traitProps = {};
-    _(buildProps)
-      .pickBy(function(propValue) {
-      return propValue === true;
-    }).each(function(propValue, propName) {
+
+    var traitNames = _.map(buildProps, function(val, key) { if (val === true) { return key; } });
+    _.each(traitNames, function(propName) {
       var matchedTrait = getPropsForOneTrait(factoryName, propName);
       if ( _.isObject(matchedTrait) ) {
         _.extend(traitProps, matchedTrait);
@@ -29,7 +28,7 @@
     var difference = _.xor(propsMinusBuildLength, _.keys(props));
     if (difference.length) {
       throw new Error(
-        'Couldnn\'t add unregistered attributes ' +
+        'Couldn\'t add unregistered attributes ' +
         difference.join(',') +
         ' in a build of factory ' +
         factoryName
@@ -42,7 +41,7 @@
   }
 
   function getOverrideProps(factoryName, props) {
-    return _.pickBy(props, function(propVal, propName) {
+    return _.pick(props, function(propVal, propName) {
       return !getPropsForOneTrait(factoryName, propName);
     });
   }
