@@ -1,20 +1,24 @@
 var gulp = require('gulp');
-var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
+var rename = require('gulp-rename');
+var sourcemaps = require('gulp-sourcemaps');
 
 var paths = {
-	vendor: ['node_modules/faker/minfaker.js',
-			 'bower_components/lodash/dist/lodash.min.js'
-			],
-	src: 'src/replicator.js'
+	src: ['src/replicator.js'],
+	dest: 'dist'
+};
+
+var config = {
+	rename: { suffix: '.min' }
 };
 
 gulp.task('default', function() {
-	var build_files = paths.vendor.concat(paths.src)
-	return gulp.src(build_files)
-		.pipe(concat('replicator.js'))
-		.pipe(gulp.dest('./dist/'))
-		.pipe(concat('replicator.min.js'))
-		.pipe(uglify())
-		.pipe(gulp.dest("./dist/"));
+
+	return gulp.src(paths.src)
+		.pipe(gulp.dest(paths.dest))
+		.pipe(rename(config.rename))
+		.pipe(sourcemaps.init())
+			.pipe(uglify())
+		.pipe(sourcemaps.write('./'))
+		.pipe(gulp.dest(paths.dest));
 });

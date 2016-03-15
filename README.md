@@ -1,11 +1,10 @@
-replicator
-==========
+# Replicator
 
-##Install
+### Install
 
 `bower install replicator`
 
-##Basic Usage
+### Basic Usage
 
 ```
 // Define name of factory, and any trait variations.
@@ -25,7 +24,7 @@ Replicator
       return props.first_name + props.last_name + i + "@gmail.com" // returns "BruceWayne1@gmail.com"
     }
   });
-  
+
 // Then call them in one of two ways
 var userFactory = Replicator.makeFactory('user') // Returns a function that can be called to produce a 'user'
 var user = userFactory() // returns {first_name: "Bruce, last_name: "Wayne", age: "15", has_card: false}
@@ -34,7 +33,7 @@ or...
 var user = Replicator.build('user') // Just auto invokes makeFactory.
 ```
 
-##Methods
+### Methods
 
 ***#define***
 ```
@@ -119,9 +118,9 @@ Replicator.define('friend', {
 This succeeds, because embed just returns `function() { Replicator.build('friend') }` and functions only get called
 during `build` or `makeFactory` calls (presumably after you've defined everything). See below for more details on using functions.
 
-##Cool Stuff
+### Cool Stuff
 
-###Use functions to create factory values!
+#### Use functions to create factory values!
 You can base any trait on any other trait you pass in, like so...
 
 ```
@@ -143,5 +142,5 @@ Replicator.define('user', {
 
 ```
 
-###Enforcement!
+#### Enforcement!
   Replicator, by default, ensures that you don't override any of your factories with traits you haven't registered. This is helpful  so that when your API changes, you can change the factory trait in one place, and all your tests should start breaking, even if you had written some random override somewhere in one of your tests. siiiick.
