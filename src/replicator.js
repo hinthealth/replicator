@@ -24,11 +24,16 @@
   }
 
   function enforce(definedProps, traitProps, props, factoryName) {
-    var propsMinusBuildLength = _.keys(_.extend({}, definedProps, traitProps))
+    var propsMinusBuildLength = _.keys(_.extend({}, definedProps, traitProps));
     // TODO: Check if xor is actually the thing we want...
     var difference = _.xor(propsMinusBuildLength, _.keys(props));
     if (difference.length) {
-      throw new Error('Couldnn\'t add unregistered attributes ' + difference.join(',') + ' in a build of factory ' + factoryName);
+      throw new Error(
+        'Couldnn\'t add unregistered attributes ' +
+        difference.join(',') +
+        ' in a build of factory ' +
+        factoryName
+      );
     }
   }
 
@@ -39,8 +44,8 @@
   function getOverrideProps(factoryName, props) {
     return _.pickBy(props, function(propVal, propName) {
       return !getPropsForOneTrait(factoryName, propName);
-    })
-  };
+    });
+  }
 
   function getPropsForOneTrait(factoryName, trait) {
     // Shouldn't be needed. Just to be paranoid.
@@ -51,9 +56,9 @@
   function evaluateDynamicProperties(props, count) {
     _.each(props, function(propVal, propName) {
       if(_.isFunction(propVal)) {
-        props[propName] = propVal(props, count)
+        props[propName] = propVal(props, count);
       }
-    })
+    });
   }
 
   function calculateProps(factoryName, buildProps) {
