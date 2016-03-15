@@ -1,6 +1,6 @@
 {
   "name": "replicator",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": "https://github.com/hinthealth/replicator",
   "authors": [
     "Blake West <bwest87@gmail.com>",
@@ -22,6 +22,6 @@
     "test"
   ],
   "dependencies": {
-    "lodash": ">=4.0.1"
+    "lodash": "~3"
   }
 }
