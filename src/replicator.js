@@ -80,22 +80,6 @@
     return props;
   }
 
-  function getFaker(attr, prop) {
-    var fakerContainers = ['Name', 'Address', 'PhoneNumber', 'Internet', 'Company', 'Image', 'Lorem', 'Helpers', 'Tree', 'Date', 'random', 'definitions'];
-    var fakeValue;
-    // Defaul to the keys value if they only passed in 'faker'.
-    attr = attr.toLowerCase() == 'faker' ? prop : attr;
-    _.each(fakerContainers, function(container) {
-      if (faker[container][attr]) {
-        fakeValue = faker[container][attr]();
-      }
-    });
-    if (fakeValue) {
-      return fakeValue;
-    }
-    throw new Error(attr + " is not a valid attribute for faker.js");
-  }
-
   function define(factoryName, props) {
     if ( !_.isString(factoryName) ) { throw new Error('A factory name is required.'); }
     // check for props to be object
