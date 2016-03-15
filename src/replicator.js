@@ -12,8 +12,8 @@
   function getAllTraitProps(factoryName, buildProps) {
     var traitProps = {};
     _(buildProps)
-      .pick(function(propValue) {
-      return propValue === true
+      .pickBy(function(propValue) {
+      return propValue === true;
     }).each(function(propValue, propName) {
       var matchedTrait = getPropsForOneTrait(factoryName, propName);
       if ( _.isObject(matchedTrait) ) {
@@ -24,11 +24,16 @@
   }
 
   function enforce(definedProps, traitProps, props, factoryName) {
-    var propsMinusBuildLength = _.keys(_.extend({}, definedProps, traitProps))
+    var propsMinusBuildLength = _.keys(_.extend({}, definedProps, traitProps));
     // TODO: Check if xor is actually the thing we want...
     var difference = _.xor(propsMinusBuildLength, _.keys(props));
     if (difference.length) {
-      throw new Error('Couldnn\'t add unregistered attributes ' + difference.join(',') + ' in a build of factory ' + factoryName);
+      throw new Error(
+        'Couldnn\'t add unregistered attributes ' +
+        difference.join(',') +
+        ' in a build of factory ' +
+        factoryName
+      );
     }
   }
 
@@ -37,10 +42,10 @@
   }
 
   function getOverrideProps(factoryName, props) {
-    return _.pick(props, function(propVal, propName) {
+    return _.pickBy(props, function(propVal, propName) {
       return !getPropsForOneTrait(factoryName, propName);
-    })
-  };
+    });
+  }
 
   function getPropsForOneTrait(factoryName, trait) {
     // Shouldn't be needed. Just to be paranoid.
@@ -51,9 +56,9 @@
   function evaluateDynamicProperties(props, count) {
     _.each(props, function(propVal, propName) {
       if(_.isFunction(propVal)) {
-        props[propName] = propVal(props, count)
+        props[propName] = propVal(props, count);
       }
-    })
+    });
   }
 
   function calculateProps(factoryName, buildProps) {
@@ -73,22 +78,6 @@
     factoryCounts[factoryName]++;
 
     return props;
-  }
-
-  function getFaker(attr, prop) {
-    var fakerContainers = ['Name', 'Address', 'PhoneNumber', 'Internet', 'Company', 'Image', 'Lorem', 'Helpers', 'Tree', 'Date', 'random', 'definitions'];
-    var fakeValue;
-    // Defaul to the keys value if they only passed in 'faker'.
-    attr = attr.toLowerCase() == 'faker' ? prop : attr;
-    _.each(fakerContainers, function(container) {
-      if (faker[container][attr]) {
-        fakeValue = faker[container][attr]();
-      }
-    });
-    if (fakeValue) {
-      return fakeValue;
-    }
-    throw new Error(attr + " is not a valid attribute for faker.js");
   }
 
   function define(factoryName, props) {
