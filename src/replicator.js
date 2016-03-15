@@ -12,8 +12,8 @@
   function getAllTraitProps(factoryName, buildProps) {
     var traitProps = {};
     _(buildProps)
-      .pick(function(propValue) {
-      return propValue === true
+      .pickBy(function(propValue) {
+      return propValue === true;
     }).each(function(propValue, propName) {
       var matchedTrait = getPropsForOneTrait(factoryName, propName);
       if ( _.isObject(matchedTrait) ) {
@@ -37,7 +37,7 @@
   }
 
   function getOverrideProps(factoryName, props) {
-    return _.pick(props, function(propVal, propName) {
+    return _.pickBy(props, function(propVal, propName) {
       return !getPropsForOneTrait(factoryName, propName);
     })
   };
