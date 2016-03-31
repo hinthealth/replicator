@@ -101,8 +101,7 @@ Replicator.define('friend', {
 });
 
 ```
-This actually errors because 'friend' was not defined when the user definition function got ran.
-BUT THERE'S A SOLUTION...!
+This actually errors because 'friend' was not defined when the user definition function got ran! `embed` is the solution.
 
 ```
 Replicator.define('user', {
@@ -118,9 +117,7 @@ Replicator.define('friend', {
 This succeeds, because embed just returns `function() { Replicator.build('friend') }` and functions only get called
 during `build` or `makeFactory` calls (presumably after you've defined everything). See below for more details on using functions.
 
-### Cool Stuff
-
-#### Use functions to create factory values!
+### Use functions to create factory values!
 You can base any trait on any other trait you pass in, like so...
 
 ```
