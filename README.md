@@ -25,12 +25,13 @@ Replicator
     }
   });
 
-// Then call them in one of two ways
-var userFactory = Replicator.makeFactory('user') // Returns a function that can be called to produce a 'user'
-var user = userFactory() // returns {first_name: "Bruce, last_name: "Wayne", age: "15", has_card: false}
-
-or...
+// Then call it either by doing...
 var user = Replicator.build('user') // Just auto invokes makeFactory.
+
+// Or...
+var userFactory = Replicator.makeFactory('user') // Returns a function that can be called to produce a 'user'
+var user = userFactory() // returns a new default `user`. This also allows you to pass overrides as an object to the factory.
+
 ```
 
 ### Methods
