@@ -41,7 +41,7 @@
   }
 
   function getOverrideProps(factoryName, props) {
-    return _.pick(props, function(propVal, propName) {
+    return _.pickBy(props, function(propVal, propName) {
       return !getPropsForOneTrait(factoryName, propName);
     });
   }
@@ -66,7 +66,6 @@
     var overrideProps = getOverrideProps(factoryName, buildProps);
 
     var props = _.extend({}, definedProps, traitProps, overrideProps);
-
     if (config.enforce) {
       enforce(definedProps, traitProps, props, factoryName);
     }
