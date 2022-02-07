@@ -1,5 +1,5 @@
 {
-  "name": "replicator",
+  "name": "js-replicator",
   "version": "0.3.0",
   "description": "A front end factory library",
   "main": "dist/replicator.min.js",
@@ -15,6 +15,9 @@
     "Gregory Hilkert <EpiphanyMachine@gmail.com>"
   ],
   "license": "MIT",
+  "dependencies": {
+    "lodash": "*"
+  },
   "devDependencies": {
     "gulp": "^3.8.5",
     "gulp-rename": "^1.2.2",
@@ -22,5 +25,16 @@
     "gulp-uglify": "^0.3.1",
     "mocha": "~1.20.1",
     "should": "~4.0.4"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hinthealth/replicator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hinthealth/replicator/issues"
+  },
+  "homepage": "https://github.com/hinthealth/replicator#readme"
 }
